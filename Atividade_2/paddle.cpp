@@ -1,7 +1,6 @@
 #include "paddle.hpp"
 
 #include <iostream>
-// using namespace std;
 
 void Paddle::create(GLuint program) {
   destroy();
@@ -16,7 +15,7 @@ void Paddle::create(GLuint program) {
   m_translation = glm::vec2(0, -0.9);
 
   std::array<glm::vec2, 4> positions{
-      // Paddle body
+      // Paddle size
       glm::vec2{-12.0f, 0.0f},
       glm::vec2{-12.0f, 0.2f},
       glm::vec2{+12.0f, 0.0f},

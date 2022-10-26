@@ -5,9 +5,9 @@
 
 #include "abcgOpenGL.hpp"
 #include "ball.hpp"
+#include "brick.hpp"
 #include "gamedata.hpp"
 #include "paddle.hpp"
-#include "rectangle.hpp"
 
 class Window : public abcg::OpenGLWindow {
 protected:
@@ -27,7 +27,7 @@ private:
 
   GameData m_gameData;
 
-  Rectangle m_rectangle;
+  Brick m_brick;
   Ball m_ball;
   Paddle m_paddle;
 
@@ -42,7 +42,7 @@ private:
   void checkWinCondition();
   void checkLossCondition();
 
-  std::array<float, 4> m_clearColor{0.8f, 0.5f, 0.0f, 1.0f};
+  std::array<float, 4> m_clearColor{0.5f, 0.5f, 0.5f, 0.5f};
 };
 
 #endif

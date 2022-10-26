@@ -43,7 +43,7 @@ void Window::onCreate() {
                                  {.source = assetsPath + "stars.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
-  abcg::glClearColor(0, 0, 0, 1);
+  abcg::glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 
 #if !defined(__EMSCRIPTEN__)
   abcg::glEnable(GL_PROGRAM_POINT_SIZE);
@@ -60,13 +60,11 @@ void Window::restart() {
   m_gameData.m_state = State::Playing;
 
   m_paddle.create(m_objectsProgram);
-  m_rectangle.create(m_objectsProgram, 42);
+  m_brick.create(m_objectsProgram, 54);
   m_ball.create(m_objectsProgram);
 }
 
 void Window::onUpdate() {
-  //  auto const deltaTime{gsl::narrow_cast<float>(getDeltaTime())};
-
   // Wait 5 seconds before restarting
   if (m_gameData.m_state != State::Playing &&
       m_restartWaitTimer.elapsed() > 5) {
@@ -85,12 +83,11 @@ void Window::onUpdate() {
 }
 
 void Window::onPaint() {
-  // update();
   abcg::glClear(GL_COLOR_BUFFER_BIT);
   abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
 
   m_paddle.paint(m_gameData);
-  m_rectangle.paint();
+  m_brick.paint();
   m_ball.paint();
 }
 
@@ -130,25 +127,56 @@ void Window::onDestroy() {
   abcg::glDeleteProgram(m_starsProgram);
   abcg::glDeleteProgram(m_objectsProgram);
 
-  m_rectangle.destroy();
+  m_brick.destroy();
   m_ball.destroy();
   m_paddle.destroy();
 }
 
 void Window::checkCollisions() {
-  for (auto &rectangle : m_rectangle.m_rectangles) {
-    if (rectangle.m_translation.x - 0.15 <= m_ball.m_translation.x &&
-        rectangle.m_translation.x + 0.15 >= m_ball.m_translation.x &&
-        rectangle.m_translation.y + 0.03f >= m_ball.m_translation.y &&
-        rectangle.m_translation.y - 0.03f <= m_ball.m_translation.y) {
-      rectangle.m_dead = true;
+  for (auto &brick : m_brick.m_bricks) {
+    // if (brick.m_translation.x - 0.12 <= m_ball.m_translation.x &&
+    //     brick.m_translation.x + 0.12 >= m_ball.m_translation.x &&
+    //     brick.m_translation.y + 0.02f >= m_ball.m_translation.y &&
+    //     brick.m_translation.y - 0.02f <= m_ball.m_translation.y) {
+    //   brick.m_dead = true;
+    // }
+    // check if the ball hit some side of the brick
+    if (brick.m_translation.x - 0.08f <= m_ball.m_translation.x &&
+        brick.m_translation.x + 0.08f >= m_ball.m_translation.x &&
+        brick.m_translation.y + 0.02f >= m_ball.m_translation.y &&
+        brick.m_translation.y - 0.02f <= m_ball.m_translation.y) {
+
+      // check if the ball hit up or down the brick
+      if (brick.m_translation.x - 0.08f <= m_ball.m_translation.x &&
+          brick.m_translation.x + 0.08f >= m_ball.m_translation.x &&
+          brick.m_translation.y + 0.02f >= m_ball.m_translation.y) {
+
+        m_ball.m_brick_down = true;
+
+      } else if (brick.m_translation.x - 0.08f <= m_ball.m_translation.x &&
+                 brick.m_translation.x + 0.08f >= m_ball.m_translation.x &&
+                 brick.m_translation.y - 0.02f <= m_ball.m_translation.y) {
+
+        m_ball.m_brick_up = true;
+
+      } else if (brick.m_translation.x + 0.08f >= m_ball.m_translation.x &&
+                 brick.m_translation.y + 0.02f >= m_ball.m_translation.y &&
+                 brick.m_translation.y - 0.02f <= m_ball.m_translation.y) {
+
+        m_ball.m_brick_left = true;
+
+      } else {
+
+        m_ball.m_brick_right = true;
+      }
+      brick.m_dead = true;
     }
   }
-  m_rectangle.m_rectangles.remove_if([](auto const &a) { return a.m_dead; });
+  m_brick.m_bricks.remove_if([](auto const &a) { return a.m_dead; });
 }
 
 void Window::checkWinCondition() {
-  if (m_rectangle.m_rectangles.empty()) {
+  if (m_brick.m_bricks.empty()) {
     m_gameData.m_state = State::Win;
     m_restartWaitTimer.restart();
   }

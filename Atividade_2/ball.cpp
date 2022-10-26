@@ -1,10 +1,7 @@
 #include "ball.hpp"
 
-//#include <cppitertools/itertools.hpp>
 #include <iostream>
 #include <random>
-
-// using namespace std;
 
 void Ball::create(GLuint program) {
   destroy();
@@ -12,9 +9,9 @@ void Ball::create(GLuint program) {
       std::chrono::steady_clock::now().time_since_epoch().count());
 
   std::uniform_int_distribution<int> intDistribution(0, 1);
-  intDistribution(m_randomEngine) == 1 ? m_esquerda = true : m_direita = true;
-  m_baixo = true;
-  m_defense = false;
+  intDistribution(m_randomEngine) == 1 ? m_left = true : m_right = true;
+  m_down = true;
+  m_paddle = false;
 
   m_program = program;
   m_colorLoc = abcg::glGetUniformLocation(m_program, "color");
@@ -64,7 +61,6 @@ void Ball::paint() {
 
   abcg::glBindVertexArray(m_VAO);
   abcg::glUniform4f(m_colorLoc, 1, 1, 1, 0);
-  abcg::glUniform1f(m_rotationLoc, 0);
   abcg::glUniform1f(m_scaleLoc, m_scale);
 
   abcg::glUniform2f(m_translationLoc, m_translation.x, m_translation.y);
@@ -78,12 +74,12 @@ void Ball::paint() {
 void Ball::destroy() {
   abcg::glDeleteBuffers(1, &m_VBO);
   abcg::glDeleteVertexArrays(1, &m_VAO);
-  m_esquerda = false, m_direita = false, m_cima = false;
+  m_left = false, m_right = false, m_up = false;
 }
 
-bool Ball::verifyPosition(Paddle &paddle) {
-  return m_defense = paddle.m_translation.x - 0.12 <= m_translation.x &&
-                     paddle.m_translation.x + 0.12 >= m_translation.x;
+bool Ball::checkPos(Paddle &paddle) {
+  return m_paddle = paddle.m_translation.x - 0.12 <= m_translation.x &&
+                    paddle.m_translation.x + 0.12 >= m_translation.x;
 }
 
 void Ball::update(Paddle &paddle, const GameData &gameData) {
@@ -92,24 +88,43 @@ void Ball::update(Paddle &paddle, const GameData &gameData) {
     m_ballTimer.restart();
 
     if (m_translation.x >= 0.99f) {
-      m_esquerda = true;
-      m_direita = false;
+      m_left = true;
+      m_right = false;
     }
     if (m_translation.x <= -0.99f) {
-      m_esquerda = false;
-      m_direita = true;
+      m_left = false;
+      m_right = true;
     }
     if (m_translation.y >= 0.99f) {
-      m_baixo = true;
-      m_cima = false;
+      m_down = true;
+      m_up = false;
     }
-    if (m_defense) {
-      m_baixo = false;
-      m_cima = true;
-      m_defense = false;
+    if (m_paddle || m_brick_up) {
+      m_down = false;
+      m_up = true;
+      m_paddle = false;
+      m_brick_up = false;
+    }
+    // if (m_brick_up) {
+    //   m_paddle = true;
+    // }
+    if (m_brick_down) {
+      m_up = false;
+      m_down = true;
+      m_brick_down = false;
+    }
+    if (m_brick_left) {
+      m_left = true;
+      m_right = false;
+      m_brick_left = false;
+    }
+    if (m_brick_right) {
+      m_left = false;
+      m_right = true;
+      m_brick_right = false;
     }
 
-    if (m_esquerda) {
+    if (m_left) {
       if (m_translation.x < -0.0f) {
         m_translation.x - 0.01f < -0.99f ? m_translation.x = -0.99f
                                          : m_translation.x -= 0.01f;
@@ -117,7 +132,7 @@ void Ball::update(Paddle &paddle, const GameData &gameData) {
         m_translation.x -= 0.01;
       }
 
-    } else if (m_direita) {
+    } else if (m_right) {
       if (m_translation.x < -0.0f) {
         m_translation.x += 0.01;
       } else {
@@ -125,16 +140,16 @@ void Ball::update(Paddle &paddle, const GameData &gameData) {
                                         : m_translation.x = 0.99f;
       }
     }
-    if (m_baixo) {
+    if (m_down) {
       if (m_translation.y < -0.0f) {
         m_translation.y - 0.01f > -0.87f
             ? m_translation.y -= 0.01
-            : (verifyPosition(paddle) ? m_translation.y = -0.87f
-                                      : m_translation.y -= 0.01);
+            : (checkPos(paddle) ? m_translation.y = -0.87f
+                                : m_translation.y -= 0.01);
       } else {
         m_translation.y -= 0.01;
       }
-    } else if (m_cima) {
+    } else if (m_up) {
       if (m_translation.y < -0.0f) {
         m_translation.y += 0.01f;
       } else {

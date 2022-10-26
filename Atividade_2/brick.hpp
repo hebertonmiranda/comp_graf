@@ -1,5 +1,5 @@
-#ifndef RECTANGLE_HPP
-#define RECTANGLE_HPP
+#ifndef BRICK_HPP
+#define BRICK_HPP
 
 #include <list>
 #include <random>
@@ -9,13 +9,13 @@
 
 class OpenGLWindow;
 
-class Rectangle {
+class Brick {
 public:
   void create(GLuint program, int quantity);
   void paint();
   void destroy();
 
-  struct Rectangles {
+  struct Bricks {
     GLuint m_VAO{};
     GLuint m_VBO{};
     GLuint m_EBO{};
@@ -28,11 +28,11 @@ public:
   float m_scale = 0.1f;
   float m_rotation = 0.0f;
 
-  std::list<Rectangles> m_rectangles;
+  std::list<Bricks> m_bricks;
 
   std::default_random_engine m_randomEngine;
 
-  Rectangle::Rectangles createAsteroid(int, int);
+  Brick::Bricks createBricks(int, int);
 
 private:
   GLuint m_program{};

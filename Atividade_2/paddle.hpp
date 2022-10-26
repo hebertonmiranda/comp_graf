@@ -2,9 +2,10 @@
 #define PADDLE_HPP
 
 #include "abcgOpenGL.hpp"
+#include "brick.hpp"
 #include "gamedata.hpp"
 
-class Rectangle;
+class Brick;
 class Ball;
 class OpenGLWindow;
 
@@ -18,7 +19,7 @@ public:
   glm::vec2 m_translation{glm::vec2(0)};
 
 private:
-  friend Rectangle;
+  friend Brick;
   friend Ball;
   friend OpenGLWindow;
 
