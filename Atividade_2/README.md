@@ -10,6 +10,8 @@ Esta tarefa consiste em desenvolver uma aplicação que mostre gráficos 2D com 
 ## Descrição do jogo
 Foi desenvolvido em C++ e utilizando a API do OpenGL o `Brick Breaker Game`, que é um jogo clássico onde há vários blocos na parte superior e é necessário quebrá-los com uma bolinha, sem deixar a bolinha cair!
 
+Jogo on-line disponível [aqui](https://hebertonmiranda.github.io/comp_graf/Atividade_2/public/)!
+
 ## Instruções do jogo
 O jogo inicia automaticamente e você deve utilizar as teclas $\leftarrow$ e $\rightarrow$ para movimentar a *prancha* de forma a não deixar que a bolinha caia e para rebatê-la, para que ela quebre todos os blocos.
 
