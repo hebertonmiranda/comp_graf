@@ -1,18 +1,17 @@
 #include "window.hpp"
+#include <algorithm>
+#include <cmath>
+#include <glm/common.hpp>
 
 void Window::onEvent(SDL_Event const &event) {
   // Keyboard events
   if (event.type == SDL_KEYDOWN) {
-    if (event.key.keysym.sym == SDLK_SPACE)
-      m_gameData.m_input.set(static_cast<size_t>(Input::Start));
     if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a)
       m_gameData.m_input.set(static_cast<size_t>(Input::Left));
     if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d)
       m_gameData.m_input.set(static_cast<size_t>(Input::Right));
   }
   if (event.type == SDL_KEYUP) {
-    if (event.key.keysym.sym == SDLK_SPACE)
-      m_gameData.m_input.reset(static_cast<size_t>(Input::Start));
     if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a)
       m_gameData.m_input.reset(static_cast<size_t>(Input::Left));
     if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d)
@@ -29,20 +28,14 @@ void Window::onCreate() {
   if (m_font == nullptr) {
     throw abcg::RuntimeError("Cannot load font file");
   }
-  // Create program to render the other objects
+  // Create program to render the ball, the brick and the paddle
   m_objectsProgram =
       abcg::createOpenGLProgram({{.source = assetsPath + "objects.vert",
                                   .stage = abcg::ShaderStage::Vertex},
                                  {.source = assetsPath + "objects.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
-  // Create program to render the stars
-  m_starsProgram =
-      abcg::createOpenGLProgram({{.source = assetsPath + "stars.vert",
-                                  .stage = abcg::ShaderStage::Vertex},
-                                 {.source = assetsPath + "stars.frag",
-                                  .stage = abcg::ShaderStage::Fragment}});
-
+  // window background color (gray)
   abcg::glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 
 #if !defined(__EMSCRIPTEN__)
@@ -124,7 +117,6 @@ void Window::onResize(glm::ivec2 const &size) {
 }
 
 void Window::onDestroy() {
-  abcg::glDeleteProgram(m_starsProgram);
   abcg::glDeleteProgram(m_objectsProgram);
 
   m_brick.destroy();
@@ -134,41 +126,40 @@ void Window::onDestroy() {
 
 void Window::checkCollisions() {
   for (auto &brick : m_brick.m_bricks) {
-    // if (brick.m_translation.x - 0.12 <= m_ball.m_translation.x &&
-    //     brick.m_translation.x + 0.12 >= m_ball.m_translation.x &&
-    //     brick.m_translation.y + 0.02f >= m_ball.m_translation.y &&
-    //     brick.m_translation.y - 0.02f <= m_ball.m_translation.y) {
-    //   brick.m_dead = true;
-    // }
+
     // check if the ball hit some side of the brick
     if (brick.m_translation.x - 0.08f <= m_ball.m_translation.x &&
         brick.m_translation.x + 0.08f >= m_ball.m_translation.x &&
         brick.m_translation.y + 0.02f >= m_ball.m_translation.y &&
         brick.m_translation.y - 0.02f <= m_ball.m_translation.y) {
 
-      // check if the ball hit up or down the brick
-      if (brick.m_translation.x - 0.08f <= m_ball.m_translation.x &&
-          brick.m_translation.x + 0.08f >= m_ball.m_translation.x &&
-          brick.m_translation.y + 0.02f >= m_ball.m_translation.y) {
+      // calculate the euclidean distance between the sides and the position of
+      // the ball to determine which side of the ball hit the brick
+      // (the minimum euclidean distance)
+      double up = fabs(brick.m_translation.y + 0.02f - m_ball.m_translation.y);
+      double down =
+          fabs(brick.m_translation.y - 0.02f - m_ball.m_translation.y);
+      double left =
+          fabs(brick.m_translation.x - 0.08f - m_ball.m_translation.x);
+      double right =
+          fabs(brick.m_translation.x + 0.08f - m_ball.m_translation.x);
 
-        m_ball.m_brick_down = true;
+      double distancies[] = {up, down, left, right};
 
-      } else if (brick.m_translation.x - 0.08f <= m_ball.m_translation.x &&
-                 brick.m_translation.x + 0.08f >= m_ball.m_translation.x &&
-                 brick.m_translation.y - 0.02f <= m_ball.m_translation.y) {
+      double min_distance = *std::min_element(distancies, distancies + 4);
 
+      // call the function to change the ball direction according to which side
+      // the ball hit the brick
+      if (min_distance == up) {
         m_ball.m_brick_up = true;
-
-      } else if (brick.m_translation.x + 0.08f >= m_ball.m_translation.x &&
-                 brick.m_translation.y + 0.02f >= m_ball.m_translation.y &&
-                 brick.m_translation.y - 0.02f <= m_ball.m_translation.y) {
-
+      } else if (min_distance == down) {
+        m_ball.m_brick_down = true;
+      } else if (min_distance == left) {
         m_ball.m_brick_left = true;
-
       } else {
-
         m_ball.m_brick_right = true;
       }
+
       brick.m_dead = true;
     }
   }

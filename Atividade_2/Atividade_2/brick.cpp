@@ -19,16 +19,16 @@ void Brick::create(GLuint program, int quantity) {
   m_bricks.clear();
   m_bricks.resize(quantity);
 
-  int m = 0, n = 0;
+  int column = 0, row = 0;
 
   for (auto &brick : m_bricks) {
-    if (m < 6) {
-      m++;
+    if (column < 6) {
+      column++;
     } else {
-      n++;
-      m = 1;
+      row++;
+      column = 1;
     }
-    brick = createBricks(m, n);
+    brick = createBricks(column, row);
   }
 }
 
@@ -57,11 +57,21 @@ void Brick::destroy() {
   }
 }
 
-Brick::Bricks Brick::createBricks(int m, int n) {
+Brick::Bricks Brick::createBricks(int column, int row) {
   Bricks brick;
 
-  brick.m_translation.x = m == 1 ? -0.75f : -1 + ((m)*0.30f) - 0.05f;
-  brick.m_translation.y = n + 1 == 1 ? 0.97f : 1 - ((n + 1) * 0.03f);
+  // position of the bricks
+  if (column == 1) {
+    brick.m_translation.x = -0.75f;
+  } else {
+    brick.m_translation.x = -1 + ((column)*0.30f) - 0.05f;
+  }
+
+  if (row + 1 == 1) {
+    brick.m_translation.y = 0.97f;
+  } else {
+    brick.m_translation.y = 1 - ((row + 1) * 0.03f);
+  }
 
   std::array<glm::vec2, 4> positions{
       // size of the bricks
@@ -77,23 +87,23 @@ Brick::Bricks Brick::createBricks(int m, int n) {
   }
 
   // color of the bricks
-  std::array const indices{0, 1, 2, 3, 0, 2, 1, 3};
+  std::array const index{0, 1, 2, 3, 0, 2, 1, 3};
 
-  if (n % 9 == 0) {
+  if (row % 9 == 0) {
     brick.m_color = {1.00, 0.00, 0.00, 1};
-  } else if (n % 9 == 1) {
+  } else if (row % 9 == 1) {
     brick.m_color = {0.88, 0.25, 0.13, 1};
-  } else if (n % 9 == 2) {
+  } else if (row % 9 == 2) {
     brick.m_color = {0.75, 0.50, 0.25, 1};
-  } else if (n % 9 == 3) {
+  } else if (row % 9 == 3) {
     brick.m_color = {0.63, 0.75, 0.38, 1};
-  } else if (n % 9 == 4) {
+  } else if (row % 9 == 4) {
     brick.m_color = {0.50, 1.00, 0.50, 1};
-  } else if (n % 9 == 5) {
+  } else if (row % 9 == 5) {
     brick.m_color = {0.38, 0.75, 0.63, 1};
-  } else if (n % 9 == 6) {
+  } else if (row % 9 == 6) {
     brick.m_color = {0.25, 0.50, 0.75, 1};
-  } else if (n % 9 == 7) {
+  } else if (row % 9 == 7) {
     brick.m_color = {0.13, 0.25, 0.88, 1};
   } else {
     brick.m_color = {0.00, 0.00, 1.00, 1};
@@ -109,7 +119,7 @@ Brick::Bricks Brick::createBricks(int m, int n) {
   // Generate EBO
   abcg::glGenBuffers(1, &brick.m_EBO);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, brick.m_EBO);
-  abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(),
+  abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index.data(),
                      GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 

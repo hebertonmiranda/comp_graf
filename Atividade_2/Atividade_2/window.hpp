@@ -22,7 +22,6 @@ protected:
 private:
   glm::ivec2 m_viewportSize{};
 
-  GLuint m_starsProgram{};
   GLuint m_objectsProgram{};
 
   GameData m_gameData;
@@ -41,8 +40,6 @@ private:
   void checkCollisions();
   void checkWinCondition();
   void checkLossCondition();
-
-  std::array<float, 4> m_clearColor{0.5f, 0.5f, 0.5f, 0.5f};
 };
 
 #endif

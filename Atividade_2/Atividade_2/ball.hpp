@@ -27,7 +27,6 @@ public:
 private:
   GLuint m_program{};
   GLint m_colorLoc{};
-  GLint m_rotationLoc{};
   GLint m_translationLoc{};
   GLint m_scaleLoc{};
 

@@ -27,7 +27,7 @@ void Paddle::create(GLuint program) {
     position /= glm::vec2{10.0f, 1.0f};
   }
 
-  std::array indices{0, 1, 2, 3, 0, 2, 1, 3};
+  std::array index{0, 1, 2, 3, 0, 2, 1, 3};
   // Generate VBO
   abcg::glGenBuffers(1, &m_VBO);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -38,7 +38,7 @@ void Paddle::create(GLuint program) {
   // Generate EBO
   abcg::glGenBuffers(1, &m_EBO);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-  abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(),
+  abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index.data(),
                      GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -76,10 +76,6 @@ void Paddle::paint(const GameData &gameData) {
   abcg::glUniform1f(m_rotationLoc, m_rotation);
   abcg::glUniform2fv(m_translationLoc, 1, &m_translation.x);
 
-  // Restart thruster blink timer every 100 ms
-  if (m_trailBlinkTimer.elapsed() > 50.0 / 1000.0)
-    m_trailBlinkTimer.restart();
-
   abcg::glUniform4fv(m_colorLoc, 1, &m_color.r);
   abcg::glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
@@ -100,6 +96,7 @@ void Paddle::update(const GameData &gameData) {
 
     m_paddleTimer.restart();
 
+    // move the paddle to the left when the left arrow is pressed
     if (gameData.m_input[static_cast<size_t>(Input::Left)]) {
       if (m_translation.x - 0.02f >= -1.0f)
         m_translation.x -= 0.02f;
@@ -107,6 +104,7 @@ void Paddle::update(const GameData &gameData) {
         m_translation.x = -0.88f;
     }
 
+    // move the paddle to the right when the right arrow is pressed
     if (gameData.m_input[static_cast<size_t>(Input::Right)]) {
       if (m_translation.x + 0.02f <= +1.0f)
         m_translation.x += 0.02f;

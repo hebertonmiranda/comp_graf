@@ -19,10 +19,6 @@ public:
   glm::vec2 m_translation{glm::vec2(0)};
 
 private:
-  friend Brick;
-  friend Ball;
-  friend OpenGLWindow;
-
   GLuint m_program{};
   GLint m_translationLoc{};
   GLint m_colorLoc{};
@@ -37,7 +33,6 @@ private:
   float m_rotation{};
   float m_scale{0.1f};
 
-  abcg::Timer m_trailBlinkTimer;
   abcg::Timer m_paddleTimer;
 };
 

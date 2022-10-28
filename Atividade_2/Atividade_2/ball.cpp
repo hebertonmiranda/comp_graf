@@ -9,7 +9,13 @@ void Ball::create(GLuint program) {
       std::chrono::steady_clock::now().time_since_epoch().count());
 
   std::uniform_int_distribution<int> intDistribution(0, 1);
-  intDistribution(m_randomEngine) == 1 ? m_left = true : m_right = true;
+
+  if (intDistribution(m_randomEngine) == 1) {
+    m_left = true;
+  } else {
+    m_right = true;
+  }
+
   m_down = true;
   m_paddle = false;
 
@@ -77,6 +83,7 @@ void Ball::destroy() {
   m_left = false, m_right = false, m_up = false;
 }
 
+// return the position of the ball in the game
 bool Ball::checkPos(Paddle &paddle) {
   return m_paddle = paddle.m_translation.x - 0.12 <= m_translation.x &&
                     paddle.m_translation.x + 0.12 >= m_translation.x;
@@ -87,47 +94,59 @@ void Ball::update(Paddle &paddle, const GameData &gameData) {
       m_ballTimer.elapsed() > 10.0 / 1000.0) {
     m_ballTimer.restart();
 
+    // check the borders to change the direction of the ball
     if (m_translation.x >= 0.99f) {
       m_left = true;
       m_right = false;
     }
+
     if (m_translation.x <= -0.99f) {
       m_left = false;
       m_right = true;
     }
+
     if (m_translation.y >= 0.99f) {
       m_down = true;
       m_up = false;
     }
+
+    // when the ball hit the paddle it changes the direction
+
+    // when the ball hit a brick, it changes the direction according to which
+    // side of the brick the ball hit (up, down, left or right side)
     if (m_paddle || m_brick_up) {
       m_down = false;
       m_up = true;
       m_paddle = false;
       m_brick_up = false;
     }
-    // if (m_brick_up) {
-    //   m_paddle = true;
-    // }
+
     if (m_brick_down) {
       m_up = false;
       m_down = true;
       m_brick_down = false;
     }
+
     if (m_brick_left) {
       m_left = true;
       m_right = false;
       m_brick_left = false;
     }
+
     if (m_brick_right) {
       m_left = false;
       m_right = true;
       m_brick_right = false;
     }
 
+    // directions of the ball
     if (m_left) {
       if (m_translation.x < -0.0f) {
-        m_translation.x - 0.01f < -0.99f ? m_translation.x = -0.99f
-                                         : m_translation.x -= 0.01f;
+        if (m_translation.x - 0.01f < -0.99f) {
+          m_translation.x = -0.99f;
+        } else {
+          m_translation.x -= 0.01f;
+        }
       } else {
         m_translation.x -= 0.01;
       }
@@ -136,25 +155,38 @@ void Ball::update(Paddle &paddle, const GameData &gameData) {
       if (m_translation.x < -0.0f) {
         m_translation.x += 0.01;
       } else {
-        m_translation.x + 0.01f < 0.99f ? m_translation.x += 0.01f
-                                        : m_translation.x = 0.99f;
+        if (m_translation.x + 0.01f < 0.99f) {
+          m_translation.x += 0.01f;
+        } else {
+          m_translation.x = 0.99f;
+        }
       }
     }
+
     if (m_down) {
       if (m_translation.y < -0.0f) {
-        m_translation.y - 0.01f > -0.87f
-            ? m_translation.y -= 0.01
-            : (checkPos(paddle) ? m_translation.y = -0.87f
-                                : m_translation.y -= 0.01);
+        if (m_translation.y - 0.01f > -0.87f) {
+          m_translation.y -= 0.01;
+        } else {
+          if (checkPos(paddle)) {
+            m_translation.y = -0.87f;
+          } else {
+            m_translation.y -= 0.01;
+          }
+        }
       } else {
         m_translation.y -= 0.01;
       }
+
     } else if (m_up) {
       if (m_translation.y < -0.0f) {
         m_translation.y += 0.01f;
       } else {
-        m_translation.y + 0.01f < 0.99f ? m_translation.y += 0.01f
-                                        : m_translation.y = 0.99f;
+        if (m_translation.y + 0.01f < 0.99f) {
+          m_translation.y += 0.01f;
+        } else {
+          m_translation.y = 0.99f;
+        }
       }
     }
   }
