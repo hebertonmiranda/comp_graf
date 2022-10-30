@@ -22,24 +22,27 @@ Para a elaboração da atividade foi utilizada a linguagem C++ juntamente com as
 
  - `ball.hpp`– Classe com os métodos e atributos utilizados para renderizar a bolinha no jogo;
 
- - `ball.cpp`– 
+ - `ball.cpp`– Ao criar a bolinha, é estabelecido randomicamente se ela irá para a esquerda ou para a direita no primeiro movimento e são criados os VAO's e VBO's para o armazenamento dos atributos da bolinha, como a posição dela ao longo do jogo. A renderização da bolinha é feita no formato `GL_TRIANGLE_FAN`. No método `update` foram criadas funções para as direções da bolinha, para que ela percorra a tela e para as mudanças de direção quando ela bate nas laterais, "teto" nos blocos.
 
  - `brick.hpp`– Classe com os métodos e atributos utilizados para renderizar os blocos do jogo que serão quebrados;
 
- - `brick.cpp`– 
+ - `brick.cpp`– São criados 54 blocos em 6 colunas com 9 blocos cada igualmente espaçados para melhorar a dinâmica do jogo. São criados os VAO's, VBO's e EBO's para o armazenamento dos atributos dos blocos, onde os blocos são retangulares e constituídos de 2 triângulos gerados no formato `GL_TRIANGLE_STRIP`. Os blocos foram normalizados e coloridos a cada linha.
 
  - `gamedata.hpp`– Classe com a definição da estrutura do jogo, os estados do jogo e as teclas de entrada;
 
  - `paddle.hpp`– Classe com os métodos e atributos utilizados para renderizar a *prancha* no jogo;
 
- - `paddle.cpp`– 
+ - `paddle.cpp`– Construção similar ao `brick.cpp`, onde basicamente a *prancha* é um bloco porém um pouco maior e fixo na parte inferior da tela. Também não é colorido como os blocos (possui cor branca) e em `update` possui a configuração de movimento conforme os inputs das teclas $\leftarrow$ e $\rightarrow$.
   
  - `window.hpp`– Classe com os métodos e atributos utilizados para renderizar a janela do jogo;
 
- - `window.cpp`– 
+ - `window.cpp`– Configurado os inputs das teclas $\leftarrow$ e $\rightarrow$ do teclado, criado o objeto para chamar os shaders da bolinha, dos blocos e da *prancha* e definido o fundo cinza da tela. Em seguida, são definidas as regras do jogo:
+   - O jogo é perdido se a bolinha estiver abaixo da *prancha*;
+   - Se não sobrarem mais blocos, então o jogo foi vencido;
+   - Se a bolinha possui coordenadas "dentro" de um bloco, então calcula-se a distância da bolinha para as bordas do bloco para estabelecer de qual lado a bolinha bateu no bloco, para alterar sua direção. Em seguida, o bloco é removido da tela.
 	
  - `assets\Inconsolata-Medium.ttf`– Fonte utilizada para anunciar a vitória no jogo (*\*You Win!\**) ou a derrota (*Game Over!*);
 
- - `assets\objects.frag`– 
+ - `assets\objects.frag`– *Fragment shader*, é o objeto que possui as propriedades da bolinha, dos blocos e da *prancha*, programa como os pixels são exibidos na tela, onde a cor de entrada é a mesma cor da saída.
 
- - `assets\objects.vert`– 
+ - `assets\objects.vert`– *Vertex shader*, é o objeto que possui as propriedades de vértices da bolinha, dos blocos e da *prancha*.
