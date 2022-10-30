@@ -22,7 +22,7 @@ Para a elaboração da atividade foi utilizada a linguagem C++ juntamente com as
 
  - `ball.hpp`– Classe com os métodos e atributos utilizados para renderizar a bolinha no jogo;
 
- - `ball.cpp`– Ao criar a bolinha, é estabelecido randomicamente se ela irá para a esquerda ou para a direita no primeiro movimento e são criados os VAO's e VBO's para o armazenamento dos atributos da bolinha, como a posição dela ao longo do jogo. A renderização da bolinha é feita no formato `GL_TRIANGLE_FAN`. No método `update` foram criadas funções para as direções da bolinha, para que ela percorra a tela e para as mudanças de direção quando ela bate nas laterais, "teto" nos blocos.
+ - `ball.cpp`– Ao criar a bolinha, é estabelecido randomicamente se ela irá para a esquerda ou para a direita no primeiro movimento e são criados os VAO's e VBO's para o armazenamento dos atributos da bolinha, como a posição dela ao longo do jogo. A renderização da bolinha é feita no formato `GL_TRIANGLE_FAN`. No método `update` foram criadas funções para as direções da bolinha, para que ela percorra a tela e para as mudanças de direção quando ela bate nas laterais, "teto" e também nos blocos.
 
  - `brick.hpp`– Classe com os métodos e atributos utilizados para renderizar os blocos do jogo que serão quebrados;
 
