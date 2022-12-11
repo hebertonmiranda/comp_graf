@@ -175,12 +175,12 @@ void Window::onPaintUI() {
                      "%d triangles");
     ImGui::PopItemWidth();
 
-    // Shader combo box
+    // Textures combo box
     {
       static std::size_t currentIndex{};
 
       ImGui::PushItemWidth(120);
-      if (ImGui::BeginCombo("Shader", m_shaderNames.at(currentIndex))) {
+      if (ImGui::BeginCombo("Textures", m_shaderNames.at(currentIndex))) {
         for (auto const index : iter::range(m_shaderNames.size())) {
           auto const isSelected{currentIndex == index};
           if (ImGui::Selectable(m_shaderNames.at(index), isSelected))
