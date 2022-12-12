@@ -20,28 +20,28 @@ Também há o *widget* para ver a quantidade de *frames* por segundo e um botão
 # Descrição técnica
 Para a elaboração da atividade foi utilizada a linguagem C++ juntamente com as bibliotecas da própria linguagem, o framework `ABCg` (https://github.com/hbatagelo/abcg) e a biblioteca `ImGui` (https://github.com/ocornut/imgui). Para a renderização gráfica foi utilizada a API `OpenGL` (https://www.opengl.org/). Foram utilizadas as seguintes técnicas:
 
- - `main.cpp`– Foi criada uma janela usando a API `OpenGL`, fixando altura e comprimento em 1280x720px, além de manter as opções de mostrar FPS e botão de tela cheia;
+ - `main.cpp` – Foi criada uma janela usando a API `OpenGL`, fixando altura e comprimento em 1280x720px, além de manter as opções de mostrar FPS e botão de tela cheia;
 
- - `model.hpp`– Classe com os métodos e atributos utilizados para renderizar o objeto principal da visualização, que é o planeta Terra.
+ - `model.hpp` – Classe com os métodos e atributos utilizados para renderizar o objeto principal da visualização, que é o planeta Terra.
 
- - `model.cpp`– São criados os VAO's, VBO's e EBO's para o armazenamento dos atributos do planeta Terra. Os atributos para fazer a renderização como vértices e texturas, são obtidos através de arquivos `OBJ` e `mtl`. Além das texturas difusa (dia) e do mapeamento de normais, foi criada mais uma função para renderizar a textura noturna do planeta. O planeta também possui suas coordenadas normalizadas e é colocado para ser exibido no centro da visualização.
+ - `model.cpp` – São criados os VAO's, VBO's e EBO's para o armazenamento dos atributos do planeta Terra. Os atributos para fazer a renderização como vértices e texturas, são obtidos através de arquivos `OBJ` e `mtl`. Além das texturas difusa (dia) e do mapeamento de normais, foi criada mais uma função para renderizar a textura noturna do planeta. O planeta também possui suas coordenadas normalizadas e é colocado para ser exibido no centro da visualização.
 
- - `trackball.hpp`– Classe com os métodos e atributos das funções de utilização do *mouse*;
+ - `trackball.hpp` – Classe com os métodos e atributos das funções de utilização do *mouse*;
 
- - `trackball.cpp`– Configurações dos movimentos do *mouse* com relação ao clique com os botões esquerdo e direito, além do *scroll*.
+ - `trackball.cpp` – Configurações dos movimentos do *mouse* com relação ao clique com os botões esquerdo e direito, além do *scroll*.
   
- - `window.hpp`– Classe com os métodos e atributos utilizados para renderizar os objetos na tela. Aqui, foi criado um vetor de programas para renderizar mais de um shader para o mesmo objeto.
+ - `window.hpp` – Classe com os métodos e atributos utilizados para renderizar os objetos na tela. Aqui, foi criado um vetor de programas para renderizar mais de um shader para o mesmo objeto.
 
- - `window.cpp`– Foram feitas as configurações gerais da janela:
+ - `window.cpp` – Foram feitas as configurações gerais da janela:
    - Foram configuradas as ações dos eventos de *mouse*. Durante a criação, foi estabelecido o fundo preto e ativação do *face culling* para otimizar a renderização dos triângulos, não renderizando triângulos que não estão visíveis;
    - Foram criadas variáveis uniformes para cada textura empregada;
    - Também é configurada uma câmera *LookAt* para limitar o espaço 3D a ser visualizado;
    - A tela inteira é configurada para projetar o planeta em perspectiva;
    - A interface contém um *slider* para escolher a quantidade de triângulos renderizados na Terra e um *combobox* para escolher entre a visualização diurna e visualização noturna.
 	
- - `assets\Earth_2K.mtl`– Arquivo contendo as coordenadas de iluminação da Terra e o vínculo ao arquivo `png` de texturização.
+ - `assets\Earth_2K.mtl` – Arquivo contendo as coordenadas de iluminação da Terra e o vínculo ao arquivo `png` de texturização.
 
- - `assets\Earth_2K.obj`– Arquivo contendo os vértices e faces mapeadas da Terra.
+ - `assets\Earth_2K.obj` – Arquivo contendo os vértices e faces mapeadas da Terra.
   
  - `assets\maps\Bump_2K.png` – Textura que representa o mapa de normais do planeta, para tornar a visão do planeta mais realista com um efeito luminoso que melhora a aparência da superfície.
 
